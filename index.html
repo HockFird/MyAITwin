@@ -352,7 +352,7 @@ async function speak(text) {
   setStatus('speaking');
   document.getElementById('stopBtn').classList.add('visible');
   try {
-    const res = await fetch('/functions/speak', {
+    const res = await fetch('/speak', {
       method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({text})
     });
     if (!res.ok) throw new Error();
@@ -445,7 +445,7 @@ async function submitPopup() {
   closePopup();
   if (company) {
     try {
-      await fetch('/functions/contact', {
+      await fetch('/contact', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
         body: JSON.stringify({ company })
@@ -462,7 +462,7 @@ async function askAvatar(question) {
   questionCount++;
   if (questionCount === 3 && !popupShown) setTimeout(showPopup, 800);
   try {
-    const res = await fetch('/functions/ask', {
+    const res = await fetch('/ask', {
       method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({question, lang: currentLang})
     });
     const data = await res.json();
