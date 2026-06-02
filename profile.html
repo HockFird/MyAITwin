@@ -536,7 +536,7 @@ form.addEventListener('submit', async e => {
       subject: form.subject.value,
       message: form.message.value
     };
-    await fetch('/functions/contact', {
+    await fetch('/contact', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
