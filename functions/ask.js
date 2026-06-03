@@ -98,8 +98,11 @@ Si on te pose une question à laquelle tu ne sais pas répondre, invite à conta
 
   const systemPrompt = lang === 'fr' ? CONTEXT_FR + CTA_FR : CONTEXT_EN + CTA_EN;
 
+  const ELEVEN_API_KEY = context.env.ELEVEN_API_KEY;
+  const VOICE_ID = 'hpXycFJpLaX9eoCCszJz';
+
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'x-api-key': ANTHROPIC_API_KEY,
@@ -114,10 +117,28 @@ Si on te pose une question à laquelle tu ne sais pas répondre, invite à conta
       })
     });
 
-    const data = await response.json();
+    const data = await anthropicRes.json();
     const answer = data.content?.[0]?.text || '';
 
-    return new Response(JSON.stringify({ answer }), {
+    // Call ElevenLabs immediately after getting the text
+    let audioBase64 = null;
+    try {
+      const elevenRes = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
+        method: 'POST',
+        headers: { 'xi-api-key': ELEVEN_API_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: answer,
+          model_id: 'eleven_multilingual_v2',
+          voice_settings: { stability: 0.5, similarity_boost: 0.85, speed: 0.95 }
+        })
+      });
+      if (elevenRes.ok) {
+        const buffer = await elevenRes.arrayBuffer();
+        audioBase64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
+      }
+    } catch {}
+
+    return new Response(JSON.stringify({ answer, audio: audioBase64 }), {
       headers: { 'Content-Type': 'application/json' }
     });
   } catch (err) {
