@@ -217,7 +217,7 @@ footer { border-top: 0.5px solid var(--rule); padding: 16px 48px; display: flex;
         <div class="av-title">Account Executive</div>
         <div class="badge-row" style="margin-top:4px">
             <div class="badge">🎙 <span data-i18n="badge.voice">Real voice</span></div>
-            <button class="mute-btn" id="muteBtnMobile" onclick="toggleMute()" data-i18n-mute="btn.mute">Mute</button>
+            <button class="mute-btn" id="muteBtnMobile" onclick="toggleMute()" data-i18n-mute="btn.mute">🔊 Mute</button>
           </div>
       </div>
     </div>
@@ -233,7 +233,7 @@ footer { border-top: 0.5px solid var(--rule); padding: 16px 48px; display: flex;
       </div>
       <div class="badge-row">
         <div class="badge">🎙 <span data-i18n="badge.voice">Real voice</span></div>
-        <button class="mute-btn" id="muteBtn" onclick="toggleMute()" data-i18n-mute="btn.mute">Mute</button>
+        <button class="mute-btn" id="muteBtn" onclick="toggleMute()" data-i18n-mute="btn.mute">🔊 Mute</button>
       </div>
     </div>
 
@@ -339,6 +339,7 @@ let currentLang = localStorage.getItem('lang') || 'en';
 let currentAudio = null;
 let chatHistory = [];
 let isMuted = false;
+let lastSpokenText = '';
 
 function toggleMenu() {
   const menu = document.getElementById('mobileMenu');
@@ -361,7 +362,7 @@ function setLang(lang) {
   });
   document.getElementById('chatInput').placeholder = i18n[lang]['placeholder'];
   document.documentElement.lang = lang;
-  const muteLabel = isMuted ? (lang === 'fr' ? 'Muet' : 'Muted') : 'Mute';
+  const muteLabel = isMuted ? '🔇 ' + (lang === 'fr' ? 'Muet' : 'Muted') : '🔊 Mute';
   ['muteBtn', 'muteBtnMobile'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = muteLabel; });
   buildPills();
 }
@@ -393,8 +394,14 @@ function setStatus(state) {
 
 function toggleMute() {
   isMuted = !isMuted;
-  if (isMuted) stopSpeaking();
-  const label = isMuted ? (currentLang === 'fr' ? 'Muet' : 'Muted') : 'Mute';
+  if (isMuted) {
+    stopSpeaking();
+  } else if (lastSpokenText) {
+    speak(lastSpokenText);
+  }
+  const label = isMuted
+    ? '🔇 ' + (currentLang === 'fr' ? 'Muet' : 'Muted')
+    : '🔊 Mute';
   ['muteBtn', 'muteBtnMobile'].forEach(id => {
     const el = document.getElementById(id);
     if (el) { el.textContent = label; el.classList.toggle('muted', isMuted); }
@@ -402,6 +409,7 @@ function toggleMute() {
 }
 
 async function speak(text) {
+  lastSpokenText = text;
   if (isMuted) return;
   stopSpeaking();
   setStatus('speaking');
