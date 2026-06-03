@@ -124,14 +124,37 @@ footer { border-top: 0.5px solid var(--rule); padding: 16px 48px; display: flex;
   .nav-links, .nav-btn { display: none; }
   .hamburger { display: flex; }
 
-  /* Stack vertically: avatar row, then chat, then questions */
   .main { display: flex; flex-direction: column; height: auto; margin-top: var(--nav-h); }
 
-  /* Chat first on mobile */
-  .right { order: 1; padding: 16px 20px 20px; min-height: auto; }
+  /* 1. Avatar strip at TOP — horizontal (photo left, text right) */
+  .left {
+    order: 1;
+    position: static;
+    height: auto;
+    border-right: none;
+    border-bottom: 0.5px solid var(--rule);
+    padding: 10px 16px;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+    background: var(--paper);
+  }
+  .left .hero-intro { display: none; }
+  .left .pills-label, .left #pills { display: none; }
+  .mobile-avatar-row { display: flex; flex-direction: row; align-items: center; gap: 12px; width: 100%; }
 
-  /* Avatar row + questions below chat */
-  .left { order: 2; position: static; height: auto; border-right: none; border-top: 0.5px solid var(--rule); padding: 16px 20px; justify-content: flex-start; gap: 0; background: var(--paper-warm); }
+  /* 2. Chat section in the middle */
+  .right { order: 2; padding: 14px 16px 16px; min-height: auto; }
+
+  /* Prevent iOS zoom on input focus */
+  .chat-input { font-size: 16px; }
+
+  /* 3. Pills section at the bottom — 2 columns */
+  .pills-mobile-section { order: 3; padding: 12px 16px 20px; background: var(--paper-warm); border-top: 0.5px solid var(--rule); }
+  .pills-mobile-section .pills-label { display: block; margin-bottom: 8px; }
+  #mobilePills { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  #mobilePills .pill { font-size: 10px; padding: 7px 10px; margin-bottom: 0; }
 
   /* Desktop-only hidden */
   .desktop-only { display: none !important; }
@@ -205,6 +228,12 @@ footer { border-top: 0.5px solid var(--rule); padding: 16px 48px; display: flex;
 
     <div class="pills-label" data-i18n="pills.label">Ask me something</div>
     <div id="pills" style="width:100%"></div>
+  </div>
+
+  <!-- MOBILE PILLS (shown below chat on mobile) -->
+  <div class="pills-mobile-section mobile-only">
+    <div class="pills-label" data-i18n="pills.label">Ask me something</div>
+    <div id="mobilePills"></div>
   </div>
 
   <!-- RIGHT -->
@@ -312,11 +341,11 @@ function setLang(lang) {
   document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.textContent === lang.toUpperCase()));
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
-    if (i18n[lang][key]) el.textContent = i18n[lang][key];
+    if (i18n[lang] && i18n[lang][key]) el.textContent = i18n[lang][key];
   });
   document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
     const key = el.getAttribute('data-i18n-placeholder');
-    if (i18n[lang][key]) el.placeholder = i18n[lang][key];
+    if (i18n[lang] && i18n[lang][key]) el.placeholder = i18n[lang][key];
   });
   document.getElementById('chatInput').placeholder = i18n[lang]['placeholder'];
   document.documentElement.lang = lang;
@@ -324,14 +353,15 @@ function setLang(lang) {
 }
 
 function buildPills() {
-  const container = document.getElementById('pills');
-  container.innerHTML = '';
-  i18n[currentLang]['pills'].forEach(q => {
-    const btn = document.createElement('button');
-    btn.className = 'pill';
-    btn.textContent = q;
-    btn.onclick = () => { document.getElementById('chatInput').value = q; sendMessage(); };
-    container.appendChild(btn);
+  [document.getElementById('pills'), document.getElementById('mobilePills')].filter(Boolean).forEach(container => {
+    container.innerHTML = '';
+    i18n[currentLang]['pills'].forEach(q => {
+      const btn = document.createElement('button');
+      btn.className = 'pill';
+      btn.textContent = q;
+      btn.onclick = () => { document.getElementById('chatInput').value = q; sendMessage(); };
+      container.appendChild(btn);
+    });
   });
 }
 
@@ -463,7 +493,7 @@ async function askAvatar(question) {
   if (questionCount === 3 && !popupShown) setTimeout(showPopup, 800);
   try {
     const res = await fetch('/ask', {
-      method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({question, lang: currentLang})
+      method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({question, lang: currentLang, questionCount})
     });
     const data = await res.json();
     const answer = data.answer || i18n[currentLang]['fallback'];
