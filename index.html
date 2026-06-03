@@ -63,6 +63,11 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; display: flex; j
 .status-dot.speaking { background: var(--ink); animation: blink 0.8s ease-in-out infinite; }
 @keyframes blink { 0%,100%{opacity:1}50%{opacity:0.3} }
 .badge { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; padding: 4px 10px; border-radius: 20px; background: var(--paper-warm); border: 0.5px solid var(--rule); color: var(--ink-soft); margin-bottom: 4px; }
+.badge-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+.badge-row .badge { margin-bottom: 0; }
+.mute-btn { font-family: var(--sans); font-size: 10px; padding: 4px 10px; border-radius: 20px; background: var(--paper-warm); border: 0.5px solid var(--rule); color: var(--ink-soft); cursor: pointer; transition: all 0.2s; letter-spacing: 0.04em; }
+.mute-btn:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.mute-btn.muted { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 .pills-label { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); align-self: flex-start; width: 100%; margin-bottom: 2px; }
 .pill { font-family: var(--sans); font-size: 11px; color: var(--ink-mid); background: var(--paper-warm); border: 0.5px solid var(--rule); border-radius: 2px; padding: 8px 12px; text-align: left; cursor: pointer; transition: all 0.2s; line-height: 1.4; width: 100%; margin-bottom: 5px; }
 .pill:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
@@ -210,7 +215,10 @@ footer { border-top: 0.5px solid var(--rule); padding: 16px 48px; display: flex;
       <div class="mobile-avatar-info">
         <div class="av-name" style="font-size:15px">Grégoire Sayer</div>
         <div class="av-title">Account Executive</div>
-        <div class="badge" style="margin-top:4px">🎙 <span data-i18n="badge.voice">Real voice</span></div>
+        <div class="badge-row" style="margin-top:4px">
+            <div class="badge">🎙 <span data-i18n="badge.voice">Real voice</span></div>
+            <button class="mute-btn" id="muteBtnMobile" onclick="toggleMute()" data-i18n-mute="btn.mute">Mute</button>
+          </div>
       </div>
     </div>
 
@@ -223,7 +231,10 @@ footer { border-top: 0.5px solid var(--rule); padding: 16px 48px; display: flex;
         <div class="status-dot" id="statusDot"></div>
         <span id="statusText" data-i18n="status.ready">Click to say hello</span>
       </div>
-      <div class="badge">🎙 <span data-i18n="badge.voice">Real voice</span></div>
+      <div class="badge-row">
+        <div class="badge">🎙 <span data-i18n="badge.voice">Real voice</span></div>
+        <button class="mute-btn" id="muteBtn" onclick="toggleMute()" data-i18n-mute="btn.mute">Mute</button>
+      </div>
     </div>
 
     <div class="pills-label" data-i18n="pills.label">Ask me something</div>
@@ -327,6 +338,7 @@ const i18n = {
 let currentLang = localStorage.getItem('lang') || 'en';
 let currentAudio = null;
 let chatHistory = [];
+let isMuted = false;
 
 function toggleMenu() {
   const menu = document.getElementById('mobileMenu');
@@ -349,6 +361,8 @@ function setLang(lang) {
   });
   document.getElementById('chatInput').placeholder = i18n[lang]['placeholder'];
   document.documentElement.lang = lang;
+  const muteLabel = isMuted ? (lang === 'fr' ? 'Muet' : 'Muted') : 'Mute';
+  ['muteBtn', 'muteBtnMobile'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = muteLabel; });
   buildPills();
 }
 
@@ -377,7 +391,18 @@ function setStatus(state) {
   if (dotM) { dotM.className = dotClass; txtM.textContent = text; }
 }
 
+function toggleMute() {
+  isMuted = !isMuted;
+  if (isMuted) stopSpeaking();
+  const label = isMuted ? (currentLang === 'fr' ? 'Muet' : 'Muted') : 'Mute';
+  ['muteBtn', 'muteBtnMobile'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.textContent = label; el.classList.toggle('muted', isMuted); }
+  });
+}
+
 async function speak(text) {
+  if (isMuted) return;
   stopSpeaking();
   setStatus('speaking');
   document.getElementById('stopBtn').classList.add('visible');
