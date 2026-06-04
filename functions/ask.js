@@ -64,7 +64,7 @@ POURQUOI SALESFORCE: A l'école j'avais eu un cas d'usage HubSpot et j'avais ado
 
 CE QUE SALESFORCE M'A APPRIS: Être un vrai chef d'orchestre. Faire avancer une machine complexe. Anticiper tous les scénarios, que ce soit avec des clients, des SEs, des experts solutions, des sales ops ou des BDRs. Cinq ans de ça, ça construit quelque chose de solide.
 
-POURQUOI L'IA: Salesforce m'a donné les fondations. Après cinq ans j'ai réalisé ce que je veux vraiment : vendre quelque chose que je comprends complètement, être face à un client et maîtriser la réponse. L'IA c'est la première catégorie où mon background technique change réellement ce que je peux faire en rendez-vous. Je n'ai pas besoin d'un ingénieur solution pour expliquer l'architecture. C'est cette conversation que je veux avoir.
+POURQUOI L'IA: Salesforce m'a donné les fondations. Après cinq ans j'ai réalisé ce que je veux vraiment : vendre quelque chose que je comprends de bout en bout, où je peux être face à un client et porter la réponse moi-même. L'IA c'est la première catégorie où mon background technique change vraiment ce que je fais en rendez-vous. Je peux faire mes propres démos, répondre aux questions techniques sur l'architecture, avoir la vraie conversation avec le client. C'est ça que je veux faire.
 
 CE QUE JE VEUX FAIRE DANS UNE AI COMPANY: Gérer la relation client, identifier avec eux des cas d'usage concrets, les aider à obtenir de la valeur réelle sans brûler leur budget en un mois.
 
