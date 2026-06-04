@@ -416,7 +416,12 @@ function prepareBase64Audio(base64) {
   const url = URL.createObjectURL(blob);
   const audio = new Audio(url);
   audio._objectUrl = url;
-  audio.load();
+  // Returns a promise that resolves when the audio is ready to play
+  audio._ready = new Promise(resolve => {
+    audio.addEventListener('canplaythrough', resolve, { once: true });
+    audio.addEventListener('error', resolve, { once: true });
+    audio.load();
+  });
   return audio;
 }
 
@@ -562,8 +567,10 @@ async function askAvatar(question) {
     const preparedAudio = data.audio ? prepareBase64Audio(data.audio) : null;
     document.getElementById('typing').classList.remove('visible');
     renderMessage('assistant', answer);
-    if (preparedAudio) {
-      playPreparedAudio(preparedAudio, answer);
+    if (data.audio) {
+      const audio = prepareBase64Audio(data.audio);
+      // Play as soon as buffered, without delaying text display
+      audio._ready.then(() => playPreparedAudio(audio, answer));
     } else {
       speak(answer);
     }
