@@ -408,6 +408,23 @@ function toggleMute() {
   });
 }
 
+function playBase64Audio(base64, text) {
+  lastSpokenText = text;
+  if (isMuted) return;
+  stopSpeaking();
+  setStatus('speaking');
+  document.getElementById('stopBtn').classList.add('visible');
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  const blob = new Blob([bytes], { type: 'audio/mpeg' });
+  const url = URL.createObjectURL(blob);
+  currentAudio = new Audio(url);
+  currentAudio.onended = () => { setStatus('idle'); document.getElementById('stopBtn').classList.remove('visible'); URL.revokeObjectURL(url); };
+  currentAudio.onerror = () => { setStatus('idle'); document.getElementById('stopBtn').classList.remove('visible'); };
+  currentAudio.play();
+}
+
 async function speak(text) {
   lastSpokenText = text;
   if (isMuted) return;
@@ -532,7 +549,11 @@ async function askAvatar(question) {
     const answer = data.answer || i18n[currentLang]['fallback'];
     document.getElementById('typing').classList.remove('visible');
     renderMessage('assistant', answer);
-    speak(answer);
+    if (data.audio) {
+      playBase64Audio(data.audio, answer);
+    } else {
+      speak(answer);
+    }
   } catch {
     document.getElementById('typing').classList.remove('visible');
     renderMessage('assistant', i18n[currentLang]['fallback']);
