@@ -160,7 +160,12 @@ DANS 3 ANS : Honnêtement je ne sais pas. Head of Sales dans une startup ou RVP 
 
 TYPE DE BOÎTE QUI M'ATTIRE : Celle qui apporte quelque chose à ses clients, qui est transparente sur ses valeurs et qui ne sur-complexifie pas les choses pour rien.`;
 
-  const systemPrompt = lang === 'fr' ? CONTEXT_FR + CTA_FR : CONTEXT_EN + CTA_EN;
+  const LANG_RULE_EN = 'ABSOLUTE RULE — HIGHEST PRIORITY: You MUST respond in the same language as the user\'s question. English question = English answer. French question = French answer. This overrides everything else in this prompt.\n\n';
+  const LANG_RULE_FR = 'RÈGLE ABSOLUE — PRIORITÉ MAXIMALE : Tu DOIS répondre dans la langue de la question. Question en anglais = réponse en anglais. Question en français = réponse en français. Cette règle prime sur tout le reste.\n\n';
+
+  const systemPrompt = lang === 'fr'
+    ? LANG_RULE_FR + CONTEXT_FR + CTA_FR
+    : LANG_RULE_EN + CONTEXT_EN + CTA_EN;
 
   const ELEVEN_API_KEY = context.env.ELEVEN_API_KEY;
   const VOICE_ID = 'hpXycFJpLaX9eoCCszJz';
