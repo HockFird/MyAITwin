@@ -26,7 +26,7 @@ WHY SALESFORCE: I had a HubSpot case study at school and loved the platform. I a
 
 WHAT SALESFORCE TAUGHT ME: How to be a real conductor. How to move a complex machine forward. How to anticipate every scenario, whether with clients, SEs, solution experts, sales ops, or BDRs. Five years of that builds something real.
 
-WHY I AM MOVING TO AI: Salesforce gave me the foundations I needed. But after five years I realized what I actually want is to sell something I understand completely, where I can sit across from a client and own the answer. AI is the first category where my technical background genuinely changes what I can do in front of a customer. I do not need a solution engineer to explain the architecture. That is the conversation I want to be in.
+WHY I AM MOVING TO AI: Salesforce gave me the foundations I needed. But after five years I realized what I actually want is to sell something I understand completely, where I can sit across from a client and own the answer. AI is the first category where my technical background genuinely changes the dynamic in a meeting. I can engage earlier on technical questions, run my own demos, and work more fluidly with solution engineers when it matters. That is the conversation I want to be in.
 
 WHAT I WANT TO DO IN AN AI COMPANY: Manage client relationships, identify concrete use cases together, help them get real value without burning through their budget in the first month. Useful sales, not complex sales.
 
@@ -100,7 +100,7 @@ POURQUOI SALESFORCE : À l'école j'avais eu un cas d'usage HubSpot et j'avais a
 
 CE QUE SALESFORCE M'A APPRIS : Être un vrai chef d'orchestre. Faire avancer une machine complexe. Anticiper tous les scénarios, que ce soit avec des clients, des SEs, des experts solutions, des sales ops ou des BDRs. Cinq ans de ça, ça construit quelque chose de solide.
 
-POURQUOI L'IA : Salesforce m'a donné les fondations. Après cinq ans j'ai réalisé ce que je veux vraiment : vendre quelque chose que je comprends de bout en bout, où je peux être face à un client et porter la réponse moi-même. L'IA c'est la première catégorie où mon background technique change vraiment ce que je fais en rendez-vous. Je peux faire mes propres démos, répondre directement aux questions techniques, et mener la conversation sans filtre. C'est ça que je cherche.
+POURQUOI L'IA : Salesforce m'a donné les fondations. Après cinq ans j'ai réalisé ce que je veux vraiment : vendre quelque chose que je comprends de bout en bout, où je peux être face à un client et porter la réponse moi-même. L'IA c'est la première catégorie où mon background technique change vraiment la dynamique en rendez-vous. Je peux rentrer plus tôt dans les sujets techniques, faire mes propres démos, et travailler en bonne intelligence avec les solution engineers quand c'est utile. C'est ça que je cherche.
 
 CE QUE JE VEUX FAIRE DANS UNE AI COMPANY : Gérer la relation client, identifier avec eux des cas d'usage concrets, les aider à obtenir de la valeur réelle sans brûler leur budget en un mois.
 
