@@ -416,11 +416,16 @@ function prepareBase64Audio(base64) {
   const url = URL.createObjectURL(blob);
   const audio = new Audio(url);
   audio._objectUrl = url;
-  audio.load();
+  // Preload without blocking — canplaythrough fires when enough data is buffered
+  audio._ready = new Promise(resolve => {
+    audio.addEventListener('canplaythrough', resolve, { once: true });
+    audio.addEventListener('error', resolve, { once: true }); // don't block on error
+    audio.load();
+  });
   return audio;
 }
 
-function playPreparedAudio(audio, text) {
+async function playPreparedAudio(audio, text) {
   lastSpokenText = text;
   if (isMuted) { URL.revokeObjectURL(audio._objectUrl); return; }
   stopSpeaking();
@@ -429,6 +434,7 @@ function playPreparedAudio(audio, text) {
   currentAudio = audio;
   currentAudio.onended = () => { setStatus('idle'); document.getElementById('stopBtn').classList.remove('visible'); URL.revokeObjectURL(audio._objectUrl); };
   currentAudio.onerror = () => { setStatus('idle'); document.getElementById('stopBtn').classList.remove('visible'); };
+  if (audio._ready) await audio._ready;
   currentAudio.play();
 }
 
@@ -491,7 +497,7 @@ function renderMessage(role, text, save = true) {
     const btn = document.createElement('button');
     btn.className = 'msg-listen';
     btn.textContent = i18n[currentLang]['btn.listen'];
-    btn.onclick = () => speak(text);
+    btn.onclick = () => { if (!isMuted) speak(text); };
     div.appendChild(btn);
   }
   msgs.appendChild(div);
@@ -502,7 +508,9 @@ function renderMessage(role, text, save = true) {
 function resetChat() {
   chatHistory = [];
   localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(POPUP_KEY);
   questionCount = 0;
+  popupShown = false;
   document.getElementById('messages').innerHTML = '';
   renderMessage('assistant', i18n[currentLang]['welcome']);
 }
