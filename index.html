@@ -563,13 +563,12 @@ async function askAvatar(question) {
     });
     const data = await res.json();
     const answer = data.answer || i18n[currentLang]['fallback'];
-    // Prepare and buffer audio before rendering text so both start simultaneously
-    const preparedAudio = data.audio ? prepareBase64Audio(data.audio) : null;
-    if (preparedAudio) await preparedAudio._ready;
     document.getElementById('typing').classList.remove('visible');
     renderMessage('assistant', answer);
-    if (preparedAudio) {
-      playPreparedAudio(preparedAudio, answer);
+    if (data.audio) {
+      const audio = prepareBase64Audio(data.audio);
+      // Play as soon as buffered, without delaying text display
+      audio._ready.then(() => playPreparedAudio(audio, answer));
     } else {
       speak(answer);
     }
