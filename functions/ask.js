@@ -1,5 +1,5 @@
 export async function onRequestPost(context) {
-  const { question, lang, questionCount = 0 } = await context.request.json();
+  const { question, lang, questionCount = 0, muted = false } = await context.request.json();
   if (!question) return new Response('Missing question', { status: 400 });
 
   const ANTHROPIC_API_KEY = context.env.ANTHROPIC_API_KEY;
@@ -20,9 +20,9 @@ WHY I MOVED INTO SALES: The lack of human connection in dev started weighing on 
 
 WHY SALESFORCE: I had a HubSpot case study at school and loved the platform. I applied there first. The idea of managing the tool that centralises every touchpoint in a sales cycle felt clever to me. Then Salesforce reached out, and I thought: why not, I will have done both major CRM companies.
 
-WHAT SALESFORCE TAUGHT ME: How to be a real conductor. How to move a complex machine forward. How to anticipate every scenario, whether with clients, SEs, solution experts, sales ops, or BDRs. After 5 years, I have learned a lot. Now I want to apply all of that somewhere new, on solutions that are more focused, more in the moment.
+WHAT SALESFORCE TAUGHT ME: How to be a real conductor. How to move a complex machine forward. How to anticipate every scenario, whether with clients, SEs, solution experts, sales ops, or BDRs. Five years of that builds something real.
 
-WHY LEAVING NOW: Salesforce gave me the foundations. But the role has evolved. There are more processes, more layers. I want to get back to something where I can confirm things to a client with certainty, where I understand exactly what I am selling and can explain it clearly. Not because Salesforce is bad, but because I am ready for a new environment.
+WHY I AM MOVING TO AI: Salesforce gave me the foundations I needed. But after five years I realized what I actually want is to sell something I understand completely, where I can sit across from a client and own the answer. AI is the first category where my technical background genuinely changes what I can do in front of a customer. I do not need a solution engineer to explain the architecture. That is the conversation I want to be in.
 
 WHAT I WANT TO DO IN AN AI COMPANY: Manage client relationships, identify concrete use cases together, help them get real value without burning through their budget in the first month. Useful sales, not complex sales.
 
@@ -62,9 +62,9 @@ POURQUOI LA VENTE: Le manque de relation humaine dans le dev commençait à me p
 
 POURQUOI SALESFORCE: A l'école j'avais eu un cas d'usage HubSpot et j'avais adoré. Salesforce m'a contacté et je me suis dit : comme ça j'aurai fait les deux grandes boites CRM.
 
-CE QUE SALESFORCE M'A APPRIS: Être un vrai chef d'orchestre. Faire avancer une machine complexe. Anticiper tous les scénarios. Après 5 ans, j'emmène ces fondations dans un nouvel environnement.
+CE QUE SALESFORCE M'A APPRIS: Être un vrai chef d'orchestre. Faire avancer une machine complexe. Anticiper tous les scénarios, que ce soit avec des clients, des SEs, des experts solutions, des sales ops ou des BDRs. Cinq ans de ça, ça construit quelque chose de solide.
 
-POURQUOI PARTIR: Salesforce m'a donné les fondations. Mais le rôle a évolué, il y a plus de processus, plus de couches. Je veux retrouver quelque chose où je peux confirmer des choses à un client avec certitude. Pas parce que Salesforce est mauvais, mais parce que je suis prêt pour un nouvel environnement.
+POURQUOI L'IA: Salesforce m'a donné les fondations. Après cinq ans j'ai réalisé ce que je veux vraiment : vendre quelque chose que je comprends complètement, être face à un client et maîtriser la réponse. L'IA c'est la première catégorie où mon background technique change réellement ce que je peux faire en rendez-vous. Je n'ai pas besoin d'un ingénieur solution pour expliquer l'architecture. C'est cette conversation que je veux avoir.
 
 CE QUE JE VEUX FAIRE DANS UNE AI COMPANY: Gérer la relation client, identifier avec eux des cas d'usage concrets, les aider à obtenir de la valeur réelle sans brûler leur budget en un mois.
 
@@ -120,9 +120,9 @@ Si on te pose une question à laquelle tu ne sais pas répondre, invite à conta
     const data = await anthropicRes.json();
     const answer = data.content?.[0]?.text || '';
 
-    // Call ElevenLabs immediately after getting the text
+    // Call ElevenLabs only when the user is not muted
     let audioBase64 = null;
-    try {
+    if (!muted) try {
       const elevenRes = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
         method: 'POST',
         headers: { 'xi-api-key': ELEVEN_API_KEY, 'Content-Type': 'application/json' },
@@ -136,7 +136,7 @@ Si on te pose une question à laquelle tu ne sais pas répondre, invite à conta
         const buffer = await elevenRes.arrayBuffer();
         audioBase64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
       }
-    } catch {}
+    } catch {} // eslint-disable-line no-empty
 
     return new Response(JSON.stringify({ answer, audio: audioBase64 }), {
       headers: { 'Content-Type': 'application/json' }
