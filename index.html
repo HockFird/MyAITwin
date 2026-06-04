@@ -435,7 +435,7 @@ async function playPreparedAudio(audio, text) {
   currentAudio.onended = () => { setStatus('idle'); document.getElementById('stopBtn').classList.remove('visible'); URL.revokeObjectURL(audio._objectUrl); };
   currentAudio.onerror = () => { setStatus('idle'); document.getElementById('stopBtn').classList.remove('visible'); };
   if (audio._ready) await audio._ready;
-  currentAudio.play();
+  currentAudio.play(); // resolves here — text renders immediately after
 }
 
 function playBase64Audio(base64, text) {
@@ -566,13 +566,13 @@ async function askAvatar(question) {
     });
     const data = await res.json();
     const answer = data.answer || i18n[currentLang]['fallback'];
-    // Prepare audio before rendering text so both start simultaneously
     const preparedAudio = data.audio ? prepareBase64Audio(data.audio) : null;
     document.getElementById('typing').classList.remove('visible');
-    renderMessage('assistant', answer);
     if (preparedAudio) {
-      playPreparedAudio(preparedAudio, answer);
+      await playPreparedAudio(preparedAudio, answer);
+      renderMessage('assistant', answer);
     } else {
+      renderMessage('assistant', answer);
       speak(answer);
     }
   } catch {
